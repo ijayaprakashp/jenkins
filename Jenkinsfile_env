@@ -7,10 +7,15 @@ pipeline{
     stages {
         stage ('STAGE1') {
             agent { label 'slave1'}
+            environment {
+                STAGE = 'stage1'
+            }
             steps {
             echo "This is stage 1"
             echo "DOCKER_USER: ${DOCKER_USER}"
             echo "AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}"
+            echo "STAGE: ${STAGE}"
+
             sleep 10
         }
             }
@@ -29,6 +34,9 @@ pipeline{
             agent { label 'slave1'}
             steps {
             echo "This is stage 3"
+             echo "DOCKER_USER: ${env.DOCKER_USER}"
+            echo "AWS_ACCESS_KEY: ${env.AWS_ACCESS_KEY}"
+            echo "STAGE: ${env.STAGE}"
             sleep 10
         }
     
