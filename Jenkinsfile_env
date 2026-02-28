@@ -1,0 +1,38 @@
+pipeline{
+    agent none
+    environment{
+        DOCKER_USER = 'ijayaprakashp'
+        AWS_ACCESS_KEY = '1234567890'
+    }
+    stages {
+        stage ('STAGE1') {
+            agent { label 'slave1'}
+            steps {
+            echo "This is stage 1"
+            echo "DOCKER_USER: ${DOCKER_USER}"
+            echo "AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}"
+            sleep 10
+        }
+            }
+        stage ('STAGE2') {
+            agent { label 'slave2'}
+            steps {
+            echo "This is stage 2"
+            sh '''
+            env
+            '''
+
+            sleep 10
+        }
+            }
+        stage ('STAGE3') {
+            agent { label 'slave1'}
+            steps {
+            echo "This is stage 3"
+            sleep 10
+        }
+    
+        }
+    }
+
+}
