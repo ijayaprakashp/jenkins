@@ -1,9 +1,10 @@
-pipepile {
+pipeline {
     agent any
     stages{
         stage('STAGE1') {
             steps {
                 echo "This is the stage 1"
+                echo " Fixed"
             }
         }
         stage('STAGE2') {
