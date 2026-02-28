@@ -5,18 +5,21 @@ pipeline{
             agent { label 'slave1'}
             steps {
             echo "This is stage 1"
+            sleep 10
         }
             }
         stage ('STAGE2') {
             agent { label 'slave2'}
             steps {
             echo "This is stage 2"
+            sleep 10
         }
             }
         stage ('STAGE3') {
             agent { label 'slave1'}
             steps {
             echo "This is stage 3"
+            sleep 10
         }
     
         }
