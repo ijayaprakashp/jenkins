@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        booleanParam(name: 'DEPLOY', description: 'Deploy to production?')
+        booleanParam(name: 'DEPLOY', description: 'want to deploy to production')
     }
 
     environment {
@@ -10,6 +10,7 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout_Repo') {
             steps {
                 checkout([
@@ -25,10 +26,12 @@ pipeline {
             }
         }
 
-        stage('Main_Branch') {
-            when { branch 'main' }
+        stage('WHEN_MAIN_BRANCH') {
+            when {
+                branch 'main'
+            }
             steps {
-                echo "This is the main branch stage"
+                echo "This is stage 1"
                 sh '''
                 echo "Main Branch"
                 sleep 5
@@ -36,19 +39,23 @@ pipeline {
             }
         }
 
-        stage('Environment_Prod') {
-            when { environment name: 'CURRENT_ENV', value: 'prod' }
+        stage('when environment') {
+            when {
+                environment name: 'CURRENT_ENV', value: 'prod'
+            }
             steps {
-                echo "This is the prod environment stage"
+                echo "This is stage 2"
                 sh '''
-                echo "When Environment"
+                echo "when Environment"
                 sleep 5
                 '''
             }
         }
 
-        stage('Deploy_If_Parameter_True') {
-            when { expression { params.DEPLOY == true } }
+        stage('when parameter only') {
+            when {
+                expression { params.DEPLOY == true }
+            }
             steps {
                 echo "DEPLOY parameter is true"
                 sh '''
@@ -57,5 +64,6 @@ pipeline {
                 '''
             }
         }
+
     }
 }
