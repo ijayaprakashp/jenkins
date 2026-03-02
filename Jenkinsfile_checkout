@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        booleanParam(name: 'DEPLOY', description: 'want to deploy to production')
+        booleanParam(name: 'DEPLOY', description: 'Deploy to production?')
     }
 
     environment {
@@ -10,14 +10,25 @@ pipeline {
     }
 
     stages {
-        
-
-        stage('when main branch') {
-            when {
-                branch 'main'
-            }
+        stage('Checkout_Repo') {
             steps {
-                echo "This is stage 1"
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/ijayaprakashp/jenkins.git'
+                    ]]
+                ])
+                echo "Repository checked out"
+            }
+        }
+
+        stage('Main_Branch') {
+            when { branch 'main' }
+            steps {
+                echo "This is the main branch stage"
                 sh '''
                 echo "Main Branch"
                 sleep 5
@@ -25,23 +36,19 @@ pipeline {
             }
         }
 
-        stage('when environment') {
-            when {
-                environment name: 'CURRENT_ENV', value: 'prod'
-            }
+        stage('Environment_Prod') {
+            when { environment name: 'CURRENT_ENV', value: 'prod' }
             steps {
-                echo "This is stage 2"
+                echo "This is the prod environment stage"
                 sh '''
-                echo "when Environment"
+                echo "When Environment"
                 sleep 5
                 '''
             }
         }
 
-        stage('when parameter only') {
-            when {
-                expression { params.DEPLOY == true }
-            }
+        stage('Deploy_If_Parameter_True') {
+            when { expression { params.DEPLOY == true } }
             steps {
                 echo "DEPLOY parameter is true"
                 sh '''
@@ -50,7 +57,5 @@ pipeline {
                 '''
             }
         }
-
     }
 }
-
