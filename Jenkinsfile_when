@@ -1,0 +1,72 @@
+pipeline {
+    agent any
+
+    parameters {
+        booleanParam(name: 'DEPLOY', description: 'want to deploy to production')
+    }
+
+    environment {
+        CURRENT_ENV = 'prod'
+    }
+
+    stages {
+
+        stage('when main branch') {
+            when {
+                branch 'main'
+            }
+            steps {
+                echo "This is stage 1"
+                sh '''
+                echo "Main Branch"
+                sleep 5
+                '''
+            }
+        }
+
+        stage('when environment') {
+            when {
+                environment name: 'CURRENT_ENV', value: 'prod'
+            }
+            steps {
+                echo "This is stage 2"
+                sh '''
+                echo "when Environment"
+                sleep 5
+                '''
+            }
+        }
+
+        stage('when parameter only') {
+            when {
+                expression { params.DEPLOY == true }
+            }
+            steps {
+                echo "DEPLOY parameter is true"
+                sh '''
+                echo "Deploying because parameter is true"
+                sleep 5
+                '''
+            }
+        }
+
+        // stage('when branch AND parameter') {
+        //     when {
+        //         not
+        //         anyOf
+        //         allOf {
+        //             branch 'main'
+        //             expression { params.DEPLOY == true }
+        //         }
+        //     }
+        //     steps {
+        //         echo "Branch is main AND DEPLOY is true"
+        //         sh '''
+        //         echo "Production Deployment..."
+        //         sleep 5
+        //         '''
+        //     }
+        // }
+
+    }
+}
