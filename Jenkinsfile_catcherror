@@ -1,0 +1,40 @@
+pipeline {
+    agent { label 'slave1'}
+    stages{
+        stage('STAGE1') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    echo "This is stage 1"
+                    sh ''' 
+                    sleep 5
+                    exit 1
+                    '''
+                }    
+            }
+        }
+        stage('PARALLEL TESTING') {
+            parallel {
+                stage('WINDOWS TESTING') {
+                    steps {
+                    echo "This Windows Testing"
+                    sh 'sleep 5'
+                }
+                
+            }
+                stage('MAC OS TESTING') {
+                    steps {
+                    echo "This is Mac os Testing "
+                    sh 'sleep 5'
+                }
+                
+            }
+            }
+        }
+        stage('FINAL') {
+                steps {
+                    echo "This is Final stage"
+                    sh 'sleep 5'
+            }
+        }    
+    }
+}
