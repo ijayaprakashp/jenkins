@@ -1,15 +1,35 @@
-pipeline{
-    agent{ label 'slave1'}
+pipeline {
+    agent { label 'slave1'}
     stages{
-        stage('STAGE1'){
-            step{
+        stage('STAGE1') {
+            steps {
                 echo "This is stage 1"
+                sh 'sleep 5'
             }
         }
-        stage('STAGE2'){
-            step{
-                echo "This is stage 2"
+        stage('PARALLEL TESTING') {
+            parallel {
+                stage('WINDOWS TESTING') {
+                    steps {
+                    echo "This Windows Testing"
+                    sh 'sleep 5'
+                }
+                
+            }
+                stage('MAC OS TESTING') {
+                    steps {
+                    echo "This is Mac os Testing "
+                    sh 'sleep 5'
+                }
+                
+            }
             }
         }
+        stage('FINAL') {
+                steps {
+                    echo "This is Final stage"
+                    sh 'sleep 5'
+            }
+        }    
     }
 }
