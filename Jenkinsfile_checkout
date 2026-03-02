@@ -23,17 +23,25 @@ pipeline {
                     ]]
                 ])
                 echo "Repository checked out"
+                sh '''
+                    echo GIT_BRANCH: $GIT_BRANCH 
+                    echo BRANCH_NAME: $BRANCH_NAME
+                '''
             }
         }
 
         stage('WHEN_MAIN_BRANCH') {
             when {
-                branch 'main'
+                expression {
+                    return env.GIT_BRANCH == '*/main'
+                }
             }
             steps {
                 echo "This is stage 1"
                 sh '''
-                echo "Main Branch"
+                
+                pwd
+                ls -lrt
                 sleep 5
                 '''
             }
@@ -46,7 +54,8 @@ pipeline {
             steps {
                 echo "This is stage 2"
                 sh '''
-                echo "when Environment"
+                    pwd
+                ls -lrt
                 sleep 5
                 '''
             }
