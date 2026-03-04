@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+
+    triggers {
+        pollSCM ('H/1 * * * *')
+    }
+
+    environment {
+        CURRENT_ENV = 'prod'
+    }
+
+    stages {
+
+        stage('Checkout_Repo') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/ijayaprakashp/jenkins.git'
+                    ]]
+                ])
+                echo "Repository checked out"
+                sh '''
+                    echo GIT_BRANCH: $GIT_BRANCH 
+                    echo BRANCH_NAME: $BRANCH_NAME
+                '''
+            }
+        }
+
+        stage('WHEN_MAIN_BRANCH') {
+            when {
+                expression {
+                    return env.GIT_BRANCH == 'origin/main'
+                }
+            }
+            steps {
+                echo "This is stage 1"
+                sh '''
+                
+                pwd
+                ls -lrt
+                sleep 5
+                '''
+            }
+        }
+
+        stage('when environment') {
+            when {
+                environment name: 'CURRENT_ENV', value: 'prod'
+            }
+            steps {
+                echo "This is stage 2"
+                sh '''
+                    pwd
+                ls -lrt
+                sleep 5
+                '''
+            }
+        }
+
+    }
+}
