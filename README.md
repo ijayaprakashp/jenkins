@@ -1,2 +1,2 @@
 # jenkins
-trigger with poll scm
+trigger with poll SCM
